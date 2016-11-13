@@ -1,4 +1,5 @@
 var BLOCK_HEIGHT = 80;
+
 // Player vertically movements
 var STEP_Y=80;
 // Player horizaontally movements
@@ -9,9 +10,9 @@ var ENEMY_WIDTH=101;
 var PLAYER_HEIGHT=80;
 var PLAYER_WIDTH=75;
 
-var ENEMY_SPEED_EASY =[180,200,220]; // diferents types of speed and levels (Finally I did't get it :(
-var ENEMY_SPEED_MEDIUM = [220,240,260];
-var ENEMY_SPEED_EXPERT = [100,200,300];
+var ENEMY_SPEED_EASY =[90,130,180]; // diferents types of speed and levels (Finally I did't get it :(
+var ENEMY_SPEED_MEDIUM = [180,260,300];
+var ENEMY_SPEED_EXPERT = [300,400,500];
 
 var MAX_ENEMY=4;
 
@@ -139,7 +140,38 @@ Player.prototype.handleEnemyCollision = function(){
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 var allEnemies= [];
+var level;
+var levelChosed;
+
+//get the game level choosed for the user
+function getLevel() {
+    var levelOptions = document.levelForm.level;
+    for (i=0; i<levelOptions.length; i++) {
+        levelChosed = levelOptions[i].checked;
+        if (levelChosed === true) {
+            level = levelOptions[i];
+        }
+    }
+
+    //depends the level choosed more or less speed
+    switch (level.value) {
+        case "easy":
+            level = ENEMY_SPEED_EASY;
+            break;
+        case "medium":
+            level = ENEMY_SPEED_MEDIUM;
+            break;
+        case "expert":
+            level = ENEMY_SPEED_EXPERT;
+            break;
+        default: 
+            window.alert("Please, choose a level for start")
+    }
+}
+
 function instantiateEnemies() {
+    getLevel();
+    allEnemies = [];
     for (i=0; i<MAX_ENEMY;i++) {
 
         var positionEnemyX = 0; // enemy x position
@@ -151,7 +183,7 @@ function instantiateEnemies() {
         if (positionEnemyY===1) { y=145; }
         if (positionEnemyY===2) { y=225; }
 
-        var enemy1= new Enemy(0,y,ENEMY_SPEED_MEDIUM[speedRandom]);
+        var enemy1= new Enemy(0,y,level[speedRandom]);
         allEnemies.push(enemy1);
     }
 }
@@ -174,5 +206,5 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
-instantiateEnemies();
+
 
