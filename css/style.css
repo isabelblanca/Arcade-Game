@@ -2,3 +2,15 @@ body {
     text-align: center;
 }
 
+canvas, #gameInformation {
+	float: left;
+}
+
+#gameInformation {
+	margin: 10% auto auto 10%;
+}
+#go {
+	margin-top: 10px;
+}
+
+

@@ -1,4 +1,5 @@
 var BLOCK_HEIGHT = 80;
+
 // Player vertically movements
 var STEP_Y=80;
 // Player horizaontally movements
@@ -9,11 +10,11 @@ var ENEMY_WIDTH=101;
 var PLAYER_HEIGHT=80;
 var PLAYER_WIDTH=75;
 
-var ENEMY_SPEED_EASY =[180,200,220]; // diferents types of speed and levels (Finally I did't get it :(
-var ENEMY_SPEED_MEDIUM = [220,240,260];
-var ENEMY_SPEED_EXPERT = [100,200,300];
+var ENEMY_SPEED_EASY =[90,130,180]; // diferents types of speed and levels
+var ENEMY_SPEED_MEDIUM = [180,260,300];
+var ENEMY_SPEED_EXPERT = [300,400,500];
 
-var MAX_ENEMY=4;
+var MAX_ENEMY=5;
 
 var SLIDE_ENEMY_Y=75; // enemy image starts after 75 pixels down vertically in the this.sprite
 var SLIDE_PLAYER_X=15;
@@ -22,6 +23,7 @@ var SLIDE_PLAYER_Y=60;
 var INITIAL_X_PLAYER=200;
 var INITIAL_Y_PLAYER=400;
 
+var score = 0;
 
 // Enemies our player must avoid
 var Enemy = function(x,y,speed) {
@@ -94,6 +96,8 @@ Player.prototype.update = function(dt) {
         };
         //collides
         if (!(player1.left>(enemy.right-10) || player1.right < (enemy.left+10) ||player1.top>=(enemy.bottom-10) || player1.bottom <=(enemy.top+10))) {
+            score = 0;
+            document.getElementById('scoreTitle').innerHTML = 0;
             this.handleEnemyCollision();
             break;
         }
@@ -127,8 +131,11 @@ Player.prototype.handleInput = function(keycode) {
                 this.x=newPosition;
             }
     }
-    if (this.y < 50) {
+    if (this.y < 0) {
         this.handleEnemyCollision();
+        score += 20;
+        var scoreTitle = document.getElementById('scoreTitle');
+        scoreTitle.innerHTML = score;
     }
 };
 Player.prototype.handleEnemyCollision = function(){
@@ -136,10 +143,40 @@ Player.prototype.handleEnemyCollision = function(){
     this.y=INITIAL_Y_PLAYER;
 };
 
-// Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 var allEnemies= [];
+var level;
+var levelChosed;
+
+//get the game level choosed for the user by radio buttons
+function getLevel() {
+    var levelOptions = document.levelForm.level;
+    for (i=0; i<levelOptions.length; i++) {
+        levelChosed = levelOptions[i].checked;
+        if (levelChosed === true) {
+            level = levelOptions[i];
+        }
+    }
+
+    //depends the level choosed, more or less speed
+    switch (level.value) {
+        case "easy":
+            level = ENEMY_SPEED_EASY;
+            break;
+        case "medium":
+            level = ENEMY_SPEED_MEDIUM;
+            break;
+        case "expert":
+            level = ENEMY_SPEED_EXPERT;
+            break;
+        default: 
+            window.alert("Please, choose a level for start")
+    }
+}
+
 function instantiateEnemies() {
+    getLevel();
+    allEnemies = [];
     for (i=0; i<MAX_ENEMY;i++) {
 
         var positionEnemyX = 0; // enemy x position
@@ -151,28 +188,33 @@ function instantiateEnemies() {
         if (positionEnemyY===1) { y=145; }
         if (positionEnemyY===2) { y=225; }
 
-        var enemy1= new Enemy(0,y,ENEMY_SPEED_MEDIUM[speedRandom]);
+        var enemy1= new Enemy(0,y,level[speedRandom]);
         allEnemies.push(enemy1);
     }
 }
 
 // Place the player object in a variable called player
-var player= new Player(INITIAL_X_PLAYER,INITIAL_Y_PLAYER);
+    var player= new Player(INITIAL_X_PLAYER,INITIAL_Y_PLAYER);
 
 
 
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
+// This listens for key presses and sends the keys to the 
+// Player.handleInput() method. When you press the go buttom,
+// you can move the player and the enemies appear.
 
-    player.handleInput(allowedKeys[e.keyCode]);
-});
-instantiateEnemies();
+document.getElementById('go').onclick = function() {
+    instantiateEnemies();
+    document.addEventListener('keyup', function(e) {
+        var allowedKeys = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down'
+        };
+
+        player.handleInput(allowedKeys[e.keyCode]);
+    });
+}
+
 

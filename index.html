@@ -6,10 +6,22 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 	<script src="js/resources.js"></script>
-	<script src="js/app.js"></script>
     <script src="js/engine.js"></script>
-
+    <div id="gameInformation">
+	    <p>Your score is: </p>
+	    <h2>Your score is:</h2>
+	    <h2 id="scoreTitle"></h2>
+	    <form name="levelForm">
+			<p>Choose your level</p>
+			<p>
+				Easy <input type="radio" name="level" value="easy">
+				Medium <input type="radio" name="level" value="medium">
+				Expert <input type="radio" name="level" value="expert"><br>
+				<input type="button" name="go" value="GO!" id="go">
+			</p>
+		</form>
+	</div>
+	<script src="js/app.js"></script>
 </body>
 </html>
